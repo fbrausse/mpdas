@@ -1,12 +1,25 @@
 #ifndef _AUDIOSCROBBLER_H
 #define _AUDIOSCROBBLER_H
 
+class LibCURL {
+public:
+	LibCURL(long flags = CURL_GLOBAL_ALL);
+	~LibCURL();
+};
+
+class LibCURLEasy : LibCURL {
+public:
+	LibCURLEasy();
+	~LibCURLEasy();
+	operator CURL *() const { return _handle; }
+private:
+	CURL *_handle;
+};
 
 class CAudioScrobbler
 {
 public:
 	CAudioScrobbler(const CConfig *cfg);
-	~CAudioScrobbler();
 
 	std::string CreateScrobbleMessage(int index, const CacheEntry& entry);
 	bool Scrobble(const CacheEntry& entry);
@@ -22,7 +35,7 @@ private:
 	bool CheckFailure();
 
 	const CConfig *_cfg;
-	CURL* _handle;
+	LibCURLEasy _handle;
 
 	std::string _response;
 

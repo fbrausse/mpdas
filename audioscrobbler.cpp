@@ -13,24 +13,27 @@ size_t writecb(void* ptr, size_t size, size_t nmemb, void *userdata)
 	return size*nmemb;
 }
 
-CAudioScrobbler::CAudioScrobbler(const CConfig *cfg)
+LibCURL::LibCURL(long flags) { curl_global_init(flags); }
+LibCURL::~LibCURL() { curl_global_cleanup(); }
+
+LibCURLEasy::LibCURLEasy()
+: _handle(curl_easy_init())
 {
-	_cfg = cfg;
-	_failcount = 0;
-	_authed = false;
-	_response = "";
-	_handle = curl_easy_init();
 	if(!_handle) {
 		eprintf("%s", "Could not initialize CURL.");
 		exit(EXIT_FAILURE);
 	}
-	_sessionid = Handshake();
 }
 
-CAudioScrobbler::~CAudioScrobbler()
+LibCURLEasy::~LibCURLEasy() { curl_easy_cleanup(_handle); }
+
+CAudioScrobbler::CAudioScrobbler(const CConfig *cfg)
+: _cfg(cfg)
+, _failcount(0)
+, _authed(false)
+, _response("")
+, _sessionid(Handshake())
 {
-	curl_easy_cleanup(_handle);
-	curl_global_cleanup();
 }
 
 std::string CAudioScrobbler::GetServiceURL()
