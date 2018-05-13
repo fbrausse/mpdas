@@ -23,7 +23,6 @@ public:
 
 	std::string CreateScrobbleMessage(int index, const CacheEntry& entry);
 	bool Scrobble(const CacheEntry& entry);
-	void ReportResponse(const char* buf, size_t size);
 	bool LoveTrack(const Song& song, bool unlove = false);
 	bool SendNowPlaying(const Song& song);
 	void Failure();
@@ -31,13 +30,11 @@ private:
 	/* returns the session ID */
 	std::string Handshake();
 	std::string GetServiceURL();
-	void OpenURL(const std::string &url, const char* postfields, char* errbuf);
-	bool CheckFailure();
+	std::string OpenURL(const std::string &url, const char* postfields, char* errbuf);
+	bool CheckFailure(const std::string &_response);
 
 	const CConfig *_cfg;
 	LibCURLEasy _handle;
-
-	std::string _response;
 
 	std::string _sessionid;
 

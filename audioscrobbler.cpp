@@ -5,11 +5,9 @@
 #define CURL_MAX_RETRIES 3
 #define CURL_RETRY_DELAY 3 // Seconds
 
-#define CLEANUP()	_response.clear()
-
 static size_t writecb(void* ptr, size_t size, size_t nmemb, void *userdata)
 {
-	reinterpret_cast<CAudioScrobbler *>(userdata)->ReportResponse((const char*)ptr, size*nmemb);
+	reinterpret_cast<std::string *>(userdata)->append((const char *)ptr/*, size*nmemb*/);
 	return size*nmemb;
 }
 
@@ -31,7 +29,6 @@ CAudioScrobbler::CAudioScrobbler(const CConfig *cfg)
 : _cfg(cfg)
 , _failcount(0)
 , _authed(false)
-, _response("")
 , _sessionid(Handshake())
 {
 }
@@ -44,12 +41,13 @@ std::string CAudioScrobbler::GetServiceURL()
 	return "https://ws.audioscrobbler.com/2.0/";
 }
 
-void CAudioScrobbler::OpenURL(const std::string &url, const char* postfields = 0, char* errbuf = 0)
+std::string CAudioScrobbler::OpenURL(const std::string &url, const char* postfields = 0, char* errbuf = 0)
 {
+	std::string reply;
 	curl_easy_setopt(_handle, CURLOPT_DNS_CACHE_TIMEOUT, 0L);
 	curl_easy_setopt(_handle, CURLOPT_NOPROGRESS, 1L);
 	curl_easy_setopt(_handle, CURLOPT_WRITEFUNCTION, writecb);
-	curl_easy_setopt(_handle, CURLOPT_WRITEDATA, reinterpret_cast<void *>(this));
+	curl_easy_setopt(_handle, CURLOPT_WRITEDATA, reinterpret_cast<void *>(&reply));
 	curl_easy_setopt(_handle, CURLOPT_TIMEOUT, 10L);
 
 	if(postfields) {
@@ -82,13 +80,10 @@ void CAudioScrobbler::OpenURL(const std::string &url, const char* postfields = 0
 			}
 		} while (res != CURLE_OK && retries < CURL_MAX_RETRIES);
 	}
+
+	return reply;
 }
 
-
-void CAudioScrobbler::ReportResponse(const char* buf, size_t size)
-{
-	_response.append(buf);
-}
 
 std::string CAudioScrobbler::CreateScrobbleMessage(int index, const CacheEntry& entry)
 {
@@ -124,7 +119,7 @@ void CAudioScrobbler::Failure()
 	}
 }
 
-bool CAudioScrobbler::CheckFailure()
+bool CAudioScrobbler::CheckFailure(const std::string &_response)
 {
 	bool retval = false;
 
@@ -177,17 +172,16 @@ bool CAudioScrobbler::Scrobble(const CacheEntry& entry)
 	}
 	iprintf("Scrobbling: %s - %s", entry.getSong().getArtist().c_str(), entry.getSong().getTitle().c_str());
 
-	OpenURL(GetServiceURL(), CreateScrobbleMessage(0, entry).c_str());
+	std::string _response = OpenURL(GetServiceURL(), CreateScrobbleMessage(0, entry).c_str());
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
 		iprintf("%s", "Scrobbled successfully.");
 		retval = true;
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
 		eprintf("%s%s", "Last.fm returned an error while scrobbling:\n", _response.c_str());
-		if(CheckFailure())
+		if(CheckFailure(_response))
 			Failure();
 	}
-	CLEANUP();
 
 	return retval;
 }
@@ -203,7 +197,7 @@ bool CAudioScrobbler::LoveTrack(const Song& song, bool unlove)
 	msg.AddField("api_key", APIKEY);
 	msg.AddField("sk", _sessionid);
 
-	OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
+	std::string _response = OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
 
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
 		iprintf("%s", "(Un)loved track successfully.");
@@ -211,11 +205,10 @@ bool CAudioScrobbler::LoveTrack(const Song& song, bool unlove)
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
 		eprintf("%s%s", "Last.fm returned an error while (un)loving the currently playing track:\n", _response.c_str());
-		if(CheckFailure())
+		if(CheckFailure(_response))
 			Failure();
 	}
 
-	CLEANUP();
 	return retval;
 }
 
@@ -239,7 +232,7 @@ bool CAudioScrobbler::SendNowPlaying(const Song& song)
 		msg.AddField("albumArtist", song.getAlbumArtist());
 	}
 
-	OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
+	std::string _response = OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
 
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
 		iprintf("%s", "Updated \"Now Playing\" status successfully.");
@@ -247,11 +240,10 @@ bool CAudioScrobbler::SendNowPlaying(const Song& song)
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
 		eprintf("%s%s", "Last.fm returned an error while updating the currently playing track:\n", _response.c_str());
-		if(CheckFailure())
+		if(CheckFailure(_response))
 			Failure();
 	}
 
-	CLEANUP();
 	return retval;
 }
 
@@ -279,7 +271,7 @@ std::string CAudioScrobbler::Handshake()
 	}
 	msg.AddField("api_key", APIKEY);
 
-	OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
+	std::string _response = OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
 
 	std::string sessionid;
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
@@ -291,11 +283,9 @@ std::string CAudioScrobbler::Handshake()
 		_authed = true;
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
-		CheckFailure();
+		CheckFailure(_response);
 		exit(EXIT_FAILURE);
 	}
-
-	CLEANUP();
 
 	return sessionid;
 }
