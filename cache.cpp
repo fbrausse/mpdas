@@ -1,7 +1,5 @@
 #include "mpdas.h"
 
-CCache* Cache = 0;
-
 void CCache::SaveCache()
 {
 	std::string path = getenv("HOME");

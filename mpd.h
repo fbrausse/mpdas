@@ -2,6 +2,7 @@
 #define _MPD_H
 
 class CAudioScrobbler;
+class CCache;
 
 class Song {
 public:
@@ -27,7 +28,7 @@ private:
 class CMPD
 {
 public:
-	CMPD(CConfig *cfg, CAudioScrobbler *as);
+	CMPD(CConfig *cfg, CAudioScrobbler *as, CCache *cache);
 	~CMPD();
 
 	bool Connect();
@@ -42,6 +43,7 @@ private:
 
 	CConfig *_cfg;
 	CAudioScrobbler *_as;
+	CCache *_cache;
 	mpd_connection *_conn;
 	int _songid;
 	int _songpos;

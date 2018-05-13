@@ -37,6 +37,4 @@ private:
 	std::vector<CacheEntry*> _entries;
 };
 
-extern CCache* Cache;
-
 #endif

@@ -10,8 +10,6 @@ void got_signal(int)
 void onclose()
 {
 	iprintf("%s", "Closing mpdas.");
-
-	if(Cache) delete Cache;
 }
 
 void setid(const char* username)
@@ -129,12 +127,12 @@ int main(int argc, char* argv[])
 	CAudioScrobbler AudioScrobbler(&cfg);
 	AudioScrobbler.Handshake();
 
-	CMPD MPD(&cfg, &AudioScrobbler);
+	CCache Cache(&AudioScrobbler);
+	Cache.LoadCache();
+
+	CMPD MPD(&cfg, &AudioScrobbler, &Cache);
 	if(!MPD.isConnected())
 		return EXIT_FAILURE;
-
-	Cache = new CCache(&AudioScrobbler);
-	Cache->LoadCache();
 
 	// catch sigint
 	struct sigaction sa;
@@ -145,7 +143,7 @@ int main(int argc, char* argv[])
 
 	while(running) {
 		MPD.Update();
-		Cache->WorkCache();
+		Cache.WorkCache();
 		usleep(500000);
 	}
 

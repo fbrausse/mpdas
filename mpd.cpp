@@ -19,15 +19,16 @@ void CMPD::CheckSubmit(int curplaytime)
 {
     if(!_gotsong || _cached || (_song.getArtist().empty() || _song.getTitle().empty())) return;
     if(curplaytime - _start >= 240 || curplaytime - _start >= _song.getDuration()/2) {
-        Cache->AddToCache(_song, _starttime);
+        _cache->AddToCache(_song, _starttime);
         _cached = true;
     }
 }
 
-CMPD::CMPD(CConfig *cfg, CAudioScrobbler *as)
+CMPD::CMPD(CConfig *cfg, CAudioScrobbler *as, CCache *cache)
 {
     _cfg = cfg;
     _as = as;
+    _cache = cache;
     _conn = NULL;
     _gotsong = false;
     _connected = false;
