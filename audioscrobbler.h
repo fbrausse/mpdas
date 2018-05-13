@@ -29,8 +29,8 @@ public:
 private:
 	/* returns the session ID */
 	std::string Handshake();
-	std::string GetServiceURL();
-	std::string OpenURL(const std::string &url, const char* postfields, char* errbuf);
+	const char * GetServiceURL();
+	std::string OpenURL(const char *url, const char* postfields, char* errbuf);
 	bool CheckFailure(const std::string &_response);
 
 	const CConfig *_cfg;

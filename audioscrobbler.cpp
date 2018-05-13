@@ -33,7 +33,7 @@ CAudioScrobbler::CAudioScrobbler(const CConfig *cfg)
 {
 }
 
-std::string CAudioScrobbler::GetServiceURL()
+const char * CAudioScrobbler::GetServiceURL()
 {
 	if(_cfg->getService() == LibreFm) {
 		return "https://libre.fm/2.0/";
@@ -41,7 +41,7 @@ std::string CAudioScrobbler::GetServiceURL()
 	return "https://ws.audioscrobbler.com/2.0/";
 }
 
-std::string CAudioScrobbler::OpenURL(const std::string &url, const char* postfields = 0, char* errbuf = 0)
+std::string CAudioScrobbler::OpenURL(const char *url, const char* postfields = 0, char* errbuf = 0)
 {
 	std::string reply;
 	curl_easy_setopt(_handle, CURLOPT_DNS_CACHE_TIMEOUT, 0L);
@@ -59,7 +59,7 @@ std::string CAudioScrobbler::OpenURL(const std::string &url, const char* postfie
 	if(errbuf)
 		curl_easy_setopt(_handle, CURLOPT_ERRORBUFFER, errbuf);
 
-	curl_easy_setopt(_handle, CURLOPT_URL, url.c_str());
+	curl_easy_setopt(_handle, CURLOPT_URL, url);
 	CURLcode res = curl_easy_perform(_handle);
 
 	// Sometimes last.fm likes to just timeout for no reason, leaving us hanging.
