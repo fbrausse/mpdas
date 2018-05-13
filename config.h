@@ -30,6 +30,4 @@ private:
 	std::map<std::string, std::string> _configuration;
 };
 
-extern CConfig* Config;
-
 #endif

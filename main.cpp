@@ -94,9 +94,9 @@ int main(int argc, char* argv[])
 
 	atexit(onclose);
 
-	CConfig *cfg = new CConfig(config);
+	CConfig cfg(config);
 
-	setid(cfg->Get("runas").c_str());
+	setid(cfg.Get("runas").c_str());
 
 	// Load config in home dir as well (if possible)
 	if(config == 0) {
@@ -110,16 +110,16 @@ int main(int argc, char* argv[])
 		std::string path = home + "/.mpdasrc";
 		std::string xdgpath = xdgconfig + "/mpdasrc";
 
-		cfg->LoadConfig(xdgpath);
-		cfg->LoadConfig(path);
+		cfg.LoadConfig(xdgpath);
+		cfg.LoadConfig(path);
 	}
 
-	if(!cfg->gotNecessaryData()) {
+	if(!cfg.gotNecessaryData()) {
 		eprintf("%s", "AudioScrobbler username or password not set.");
 		return EXIT_FAILURE;
 	}
 
-	iprintf("Using %s service URL", cfg->getService() == LastFm ? "Last.fm" : "Libre.fm");
+	iprintf("Using %s service URL", cfg.getService() == LastFm ? "Last.fm" : "Libre.fm");
 
 	if (go_daemon) {
 		if (daemon(1, 0)) {
@@ -128,11 +128,11 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	MPD = new CMPD(cfg);
+	MPD = new CMPD(&cfg);
 	if(!MPD->isConnected())
 		return EXIT_FAILURE;
 
-	AudioScrobbler = new CAudioScrobbler(cfg);
+	AudioScrobbler = new CAudioScrobbler(&cfg);
 	AudioScrobbler->Handshake();
 	Cache = new CCache();
 	Cache->LoadCache();
