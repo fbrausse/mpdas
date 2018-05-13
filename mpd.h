@@ -50,6 +50,4 @@ private:
 	bool _cached;
 };
 
-extern CMPD* MPD;
-
 #endif

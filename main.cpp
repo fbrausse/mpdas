@@ -11,7 +11,6 @@ void onclose()
 {
 	iprintf("%s", "Closing mpdas.");
 
-	if(MPD) delete MPD;
 	if(AudioScrobbler) delete AudioScrobbler;
 	if(Cache) delete Cache;
 }
@@ -128,8 +127,8 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	MPD = new CMPD(&cfg);
-	if(!MPD->isConnected())
+	CMPD MPD(&cfg);
+	if(!MPD.isConnected())
 		return EXIT_FAILURE;
 
 	AudioScrobbler = new CAudioScrobbler(&cfg);
@@ -145,7 +144,7 @@ int main(int argc, char* argv[])
 	sigaction(SIGINT, &sa, NULL);
 
 	while(running) {
-		MPD->Update();
+		MPD.Update();
 		Cache->WorkCache();
 		usleep(500000);
 	}

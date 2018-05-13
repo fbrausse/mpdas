@@ -1,7 +1,5 @@
 #include "mpdas.h"
 
-CMPD* MPD = 0;
-
 void CMPD::SetSong(const Song *song)
 {
     _cached = false;
