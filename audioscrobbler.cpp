@@ -27,8 +27,8 @@ LibCURLEasy::~LibCURLEasy() { curl_easy_cleanup(_handle); }
 
 CAudioScrobbler::CAudioScrobbler(const CConfig &cfg)
 : _cfg(cfg)
-, _failcount(0)
 , _authed(false)
+, _failcount(0)
 , _sessionid(Handshake())
 {
 }

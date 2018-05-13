@@ -36,10 +36,10 @@ private:
 	const CConfig &_cfg;
 	const LibCURLEasy _handle;
 
-	std::string _sessionid;
-
 	bool _authed;
 	int _failcount;
+
+	std::string _sessionid;
 };
 
 class CLastFMMessage

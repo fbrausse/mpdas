@@ -29,11 +29,11 @@ CMPD::CMPD(const CConfig &cfg, CAudioScrobbler &as, CCache &cache)
 , _as(as)
 , _cache(cache)
 , _conn(NULL)
+, _songid(-1)
+, _songpos(-1)
 , _gotsong(false)
 , _connected(false)
 , _cached(false)
-, _songid(-1)
-, _songpos(-1)
 {
     if(Connect())
         iprintf("%s", "Connected to MPD.");
