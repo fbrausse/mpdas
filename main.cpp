@@ -1,6 +1,6 @@
 #include "mpdas.h"
 
-bool running = true;
+static bool running = true;
 
 void got_signal(int)
 {
