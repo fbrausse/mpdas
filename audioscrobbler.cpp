@@ -268,8 +268,8 @@ void CAudioScrobbler::Handshake()
 		msg.AddField("password", password);
 	}
 	else {
-		std::string password_hashed(md5sum((char*)"%s", password.c_str()));
-		std::string authtoken(md5sum((char*)"%s%s", username.c_str(), password_hashed.c_str()));
+		std::string password_hashed(md5sum("%s", password.c_str()));
+		std::string authtoken(md5sum("%s%s", username.c_str(), password_hashed.c_str()));
 		msg.AddField("authToken", authtoken);
 		msg.AddField("password", password_hashed);
 	}
