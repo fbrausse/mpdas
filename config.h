@@ -9,24 +9,24 @@ enum ScrobblingService {
 class CConfig
 {
 public:
-	CConfig(char* cfg);
+	CConfig(const char* cfg);
 
-	ScrobblingService getService();
+	ScrobblingService getService() const;
 
-	std::string Get(std::string name);
-	bool GetBool(std::string name);
-	int GetInt(std::string name);
+	std::string Get(const std::string &name) const;
+	bool GetBool(const std::string &name) const;
+	int GetInt(const std::string &name) const;
 	void Set(std::string name, std::string value) { _configuration[name] = value; };
 
-	bool gotNecessaryData() {
+	bool gotNecessaryData() const {
 		if(!Get("username").size() || !Get("password").size())
 			return false;
 		return true;
 	}
 
-	void LoadConfig(std::string path);
+	void LoadConfig(const std::string &path);
 private:
-	void ParseLine(std::string line);
+	void ParseLine(const std::string &line);
 	std::map<std::string, std::string> _configuration;
 };
 

@@ -16,14 +16,14 @@ int IniHandler(void* param, const char* section, const char* name, const char* v
     return 1;
 }
 
-void CConfig::LoadConfig(std::string path)
+void CConfig::LoadConfig(const std::string &path)
 {
     if(ini_parse(path.c_str(), &IniHandler, this) < 0) {
 		iprintf("Cannot parse config file (%s).", path.c_str());
 		return;
     }
 }
-std::string CConfig::Get(std::string name)
+std::string CConfig::Get(const std::string &name) const
 {
     if(_configuration.find(name) == _configuration.end()) {
 		return "";
@@ -32,23 +32,23 @@ std::string CConfig::Get(std::string name)
     return _configuration.find(name)->second;
 }
 
-bool CConfig::GetBool(std::string name)
+bool CConfig::GetBool(const std::string &name) const
 {
     std::string value = Get(name);
     return value == "1" || value == "true";
 }
 
-int CConfig::GetInt(std::string name)
+int CConfig::GetInt(const std::string &name) const
 {
     return atoi(Get(name).c_str());
 }
 
-ScrobblingService CConfig::getService()
+ScrobblingService CConfig::getService() const
 {
     return Get("service") == "librefm" ? LibreFm : LastFm;
 }
 
-CConfig::CConfig(char* cfg)
+CConfig::CConfig(const char* cfg)
 {
     /* Set optional settings to default */
     Set("host", "localhost");
