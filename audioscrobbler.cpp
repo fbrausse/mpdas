@@ -7,7 +7,7 @@
 
 #define CLEANUP()	_response.clear()
 
-size_t writecb(void* ptr, size_t size, size_t nmemb, void *userdata)
+static size_t writecb(void* ptr, size_t size, size_t nmemb, void *userdata)
 {
 	reinterpret_cast<CAudioScrobbler *>(userdata)->ReportResponse((const char*)ptr, size*nmemb);
 	return size*nmemb;
