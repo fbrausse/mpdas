@@ -26,13 +26,13 @@ private:
 class CCache
 {
 public:
-	CCache(CAudioScrobbler *as) { _failtime = 0; }
+	CCache(CAudioScrobbler &as) : _as(as) { _failtime = 0; }
 	void AddToCache(const Song& song, time_t starttime);
 	void WorkCache();
 	void SaveCache();
 	void LoadCache();
 private:
-	CAudioScrobbler *_as;
+	CAudioScrobbler &_as;
 	time_t _failtime;
 	std::vector<CacheEntry*> _entries;
 };

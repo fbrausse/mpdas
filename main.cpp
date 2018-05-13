@@ -124,12 +124,12 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	CAudioScrobbler AudioScrobbler(&cfg);
+	CAudioScrobbler AudioScrobbler(cfg);
 
-	CCache Cache(&AudioScrobbler);
+	CCache Cache(AudioScrobbler);
 	Cache.LoadCache();
 
-	CMPD MPD(&cfg, &AudioScrobbler, &Cache);
+	CMPD MPD(cfg, AudioScrobbler, Cache);
 	if(!MPD.isConnected())
 		return EXIT_FAILURE;
 

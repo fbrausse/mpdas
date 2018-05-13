@@ -28,7 +28,7 @@ private:
 class CMPD
 {
 public:
-	CMPD(CConfig *cfg, CAudioScrobbler *as, CCache *cache);
+	CMPD(const CConfig &cfg, CAudioScrobbler &as, CCache &cache);
 	~CMPD();
 
 	bool Connect();
@@ -41,9 +41,9 @@ public:
 private:
 	void GotNewSong(struct mpd_song *song);
 
-	CConfig *_cfg;
-	CAudioScrobbler *_as;
-	CCache *_cache;
+	const CConfig &_cfg;
+	CAudioScrobbler &_as;
+	CCache &_cache;
 	mpd_connection *_conn;
 	int _songid;
 	int _songpos;

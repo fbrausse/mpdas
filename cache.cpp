@@ -55,14 +55,14 @@ void CCache::WorkCache()
 	}
 	_failtime = 0;
 	while(_entries.size()) {
-		if(_as->Scrobble(*_entries.front())) {
+		if(_as.Scrobble(*_entries.front())) {
 			delete _entries.front();
 			_entries.erase(_entries.begin());
 		}
 		else {
 			eprintf("%s", "Error scrobbling. Trying again in 5 minutes.");
 			_failtime = time(NULL);
-			_as->Failure();
+			_as.Failure();
 			break;
 		}
 		sleep(1);

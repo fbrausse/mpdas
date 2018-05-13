@@ -7,7 +7,7 @@ void CMPD::SetSong(const Song *song)
         _song = *song;
         _gotsong = true;
         iprintf("New song: %s - %s", _song.getArtist().c_str(), _song.getTitle().c_str());
-        _as->SendNowPlaying(*song);
+        _as.SendNowPlaying(*song);
     }
     else {
         _gotsong = false;
@@ -19,23 +19,22 @@ void CMPD::CheckSubmit(int curplaytime)
 {
     if(!_gotsong || _cached || (_song.getArtist().empty() || _song.getTitle().empty())) return;
     if(curplaytime - _start >= 240 || curplaytime - _start >= _song.getDuration()/2) {
-        _cache->AddToCache(_song, _starttime);
+        _cache.AddToCache(_song, _starttime);
         _cached = true;
     }
 }
 
-CMPD::CMPD(CConfig *cfg, CAudioScrobbler *as, CCache *cache)
+CMPD::CMPD(const CConfig &cfg, CAudioScrobbler &as, CCache &cache)
+: _cfg(cfg)
+, _as(as)
+, _cache(cache)
+, _conn(NULL)
+, _gotsong(false)
+, _connected(false)
+, _cached(false)
+, _songid(-1)
+, _songpos(-1)
 {
-    _cfg = cfg;
-    _as = as;
-    _cache = cache;
-    _conn = NULL;
-    _gotsong = false;
-    _connected = false;
-    _cached = false;
-    _songid = -1;
-    _songpos = -1;
-
     if(Connect())
         iprintf("%s", "Connected to MPD.");
     else
@@ -53,11 +52,11 @@ bool CMPD::Connect()
     if(_conn)
         mpd_connection_free(_conn);
 
-    _conn = mpd_connection_new(_cfg->Get("host").c_str(), _cfg->GetInt("port"), 0);
+    _conn = mpd_connection_new(_cfg.Get("host").c_str(), _cfg.GetInt("port"), 0);
     _connected = _conn && mpd_connection_get_error(_conn) == MPD_ERROR_SUCCESS;
 
-    if(_connected && _cfg->Get("mpdpassword").size() > 0) {
-        _connected &= mpd_run_password(_conn, _cfg->Get("mpdpassword").c_str());
+    if(_connected && _cfg.Get("mpdpassword").size() > 0) {
+        _connected &= mpd_run_password(_conn, _cfg.Get("mpdpassword").c_str());
     }
     else if(!_connected) {
         eprintf("MPD connection error: %s", mpd_connection_get_error_message(_conn));
@@ -123,10 +122,10 @@ void CMPD::Update()
                 const char *text = mpd_message_get_text(msg);
                 if(_gotsong && text) {
                     if(!strncmp(text, "love", 4)) {
-                        _as->LoveTrack(_song);
+                        _as.LoveTrack(_song);
                     }
                     else if(!strncmp(text, "unlove", 6)) {
-                        _as->LoveTrack(_song, true);
+                        _as.LoveTrack(_song, true);
                     }
                 }
                 mpd_message_free(msg);

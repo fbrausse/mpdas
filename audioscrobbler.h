@@ -19,7 +19,7 @@ private:
 class CAudioScrobbler
 {
 public:
-	CAudioScrobbler(const CConfig *cfg);
+	CAudioScrobbler(const CConfig &cfg);
 
 	std::string CreateScrobbleMessage(int index, const CacheEntry& entry);
 	bool Scrobble(const CacheEntry& entry);
@@ -33,8 +33,8 @@ private:
 	std::string OpenURL(const char *url, const char* postfields, char* errbuf);
 	bool CheckFailure(const std::string &_response);
 
-	const CConfig *_cfg;
-	LibCURLEasy _handle;
+	const CConfig &_cfg;
+	const LibCURLEasy _handle;
 
 	std::string _sessionid;
 

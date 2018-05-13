@@ -25,7 +25,7 @@ LibCURLEasy::LibCURLEasy()
 
 LibCURLEasy::~LibCURLEasy() { curl_easy_cleanup(_handle); }
 
-CAudioScrobbler::CAudioScrobbler(const CConfig *cfg)
+CAudioScrobbler::CAudioScrobbler(const CConfig &cfg)
 : _cfg(cfg)
 , _failcount(0)
 , _authed(false)
@@ -35,7 +35,7 @@ CAudioScrobbler::CAudioScrobbler(const CConfig *cfg)
 
 const char * CAudioScrobbler::GetServiceURL()
 {
-	if(_cfg->getService() == LibreFm) {
+	if(_cfg.getService() == LibreFm) {
 		return "https://libre.fm/2.0/";
 	}
 	return "https://ws.audioscrobbler.com/2.0/";
@@ -249,18 +249,18 @@ bool CAudioScrobbler::SendNowPlaying(const Song& song)
 
 std::string CAudioScrobbler::Handshake()
 {
-	std::string username = _cfg->Get("username");
+	std::string username = _cfg.Get("username");
 	for(unsigned int i = 0; i < username.length(); i++) {
 		username[i] = tolower(username[i]);
 	}
-	std::string password = _cfg->Get("password");
+	std::string password = _cfg.Get("password");
 
 	CLastFMMessage msg;
 
 	msg.AddField("method", "auth.getMobileSession");
 	msg.AddField("username", username);
 
-	if(_cfg->getService() == LastFm) {
+	if(_cfg.getService() == LastFm) {
 		msg.AddField("password", password);
 	}
 	else {
