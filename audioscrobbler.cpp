@@ -249,9 +249,9 @@ bool CAudioScrobbler::SendNowPlaying(const Song& song)
 
 std::string CAudioScrobbler::Handshake()
 {
-	std::string username = "";
-	for(unsigned int i = 0; i < _cfg->Get("username").length(); i++) {
-		username.append(1, tolower(_cfg->Get("username").c_str()[i]));
+	std::string username = _cfg->Get("username");
+	for(unsigned int i = 0; i < username.length(); i++) {
+		username[i] = tolower(username[i]);
 	}
 	std::string password = _cfg->Get("password");
 
@@ -293,18 +293,16 @@ std::string CAudioScrobbler::Handshake()
 std::string CLastFMMessage::GetMessage(CURL *curl_handle) const
 {
 	std::ostringstream strstream;
-	for(std::map<std::string, std::string>::const_iterator it = valueMap.begin(); it != valueMap.end(); ++it) {
-		if(it != valueMap.begin()) {
-			strstream << "&";
-		}
 
+	// append signature hash
+	strstream << "api_sig=" << GetSignatureHash();
+
+	for(std::map<std::string, std::string>::const_iterator it = valueMap.begin(); it != valueMap.end(); ++it) {
+		strstream << "&";
 		char* escaped = curl_easy_escape(curl_handle, it->second.c_str(), it->second.length());
 		strstream << it->first << "=" << escaped;
 		curl_free(escaped);
 	}
-
-	// append signature hash
-	strstream << "&api_sig=" << GetSignatureHash();
 
 	return strstream.str();
 }
