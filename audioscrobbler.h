@@ -23,7 +23,6 @@ private:
 	CConfig *_cfg;
 	CURL* _handle;
 
-	std::string _password;
 	std::string _response;
 
 	std::string _sessionid;
