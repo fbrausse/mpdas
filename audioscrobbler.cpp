@@ -121,7 +121,7 @@ void CAudioScrobbler::Failure()
 	}
 }
 
-bool CAudioScrobbler::CheckFailure(std::string response)
+bool CAudioScrobbler::CheckFailure()
 {
 	bool retval = false;
 
@@ -181,7 +181,7 @@ bool CAudioScrobbler::Scrobble(const CacheEntry& entry)
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
 		eprintf("%s%s", "Last.fm returned an error while scrobbling:\n", _response.c_str());
-		if(CheckFailure(_response))
+		if(CheckFailure())
 			Failure();
 	}
 	CLEANUP();
@@ -208,7 +208,7 @@ bool CAudioScrobbler::LoveTrack(const Song& song, bool unlove)
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
 		eprintf("%s%s", "Last.fm returned an error while (un)loving the currently playing track:\n", _response.c_str());
-		if(CheckFailure(_response))
+		if(CheckFailure())
 			Failure();
 	}
 
@@ -244,7 +244,7 @@ bool CAudioScrobbler::SendNowPlaying(const Song& song)
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
 		eprintf("%s%s", "Last.fm returned an error while updating the currently playing track:\n", _response.c_str());
-		if(CheckFailure(_response))
+		if(CheckFailure())
 			Failure();
 	}
 
@@ -288,7 +288,7 @@ std::string CAudioScrobbler::Handshake()
 		_authed = true;
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
-		CheckFailure(_response);
+		CheckFailure();
 		exit(EXIT_FAILURE);
 	}
 

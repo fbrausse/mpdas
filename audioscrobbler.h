@@ -19,7 +19,7 @@ private:
 	std::string Handshake();
 	std::string GetServiceURL();
 	void OpenURL(std::string url, const char* postfields, char* errbuf);
-	bool CheckFailure(std::string response);
+	bool CheckFailure();
 
 	CConfig *_cfg;
 	CURL* _handle;
