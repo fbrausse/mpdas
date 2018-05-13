@@ -277,7 +277,7 @@ std::string CAudioScrobbler::Handshake()
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
 		size_t start, end;
 		start = _response.find("<key>") + 5;
-		end = _response.find("</key>");
+		end = _response.find("</key>", start);
 		sessionid = _response.substr(start, end-start);
 		iprintf("%s%s", "Last.fm handshake successful. SessionID: ", sessionid.c_str());
 		_authed = true;
@@ -317,5 +317,5 @@ std::string CLastFMMessage::GetSignatureHash() const
 	// append secret key
 	strstream << SECRET;
 
-	return std::string(md5sum((char*)"%s", strstream.str().c_str()));
+	return std::string(md5sum("%s", strstream.str().c_str()));
 }
