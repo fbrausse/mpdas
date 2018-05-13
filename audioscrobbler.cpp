@@ -5,13 +5,11 @@
 #define CURL_MAX_RETRIES 3
 #define CURL_RETRY_DELAY 3 // Seconds
 
-CAudioScrobbler* AudioScrobbler = 0;
-
 #define CLEANUP()	_response.clear()
 
-size_t writecb(void* ptr, size_t size, size_t nmemb, void *stream)
+size_t writecb(void* ptr, size_t size, size_t nmemb, void *userdata)
 {
-	AudioScrobbler->ReportResponse((char*)ptr, size*nmemb);
+	reinterpret_cast<CAudioScrobbler *>(userdata)->ReportResponse((char*)ptr, size*nmemb);
 	return size*nmemb;
 }
 
@@ -47,6 +45,7 @@ void CAudioScrobbler::OpenURL(std::string url, const char* postfields = 0, char*
 	curl_easy_setopt(_handle, CURLOPT_DNS_CACHE_TIMEOUT, 0);
 	curl_easy_setopt(_handle, CURLOPT_NOPROGRESS, 1);
 	curl_easy_setopt(_handle, CURLOPT_WRITEFUNCTION, writecb);
+	curl_easy_setopt(_handle, CURLOPT_WRITEDATA, reinterpret_cast<void *>(this));
 	curl_easy_setopt(_handle, CURLOPT_TIMEOUT, 10);
 
 	if(postfields) {

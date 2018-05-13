@@ -7,7 +7,7 @@ void CMPD::SetSong(const Song *song)
         _song = *song;
         _gotsong = true;
         iprintf("New song: %s - %s", _song.getArtist().c_str(), _song.getTitle().c_str());
-        AudioScrobbler->SendNowPlaying(*song);
+        _as->SendNowPlaying(*song);
     }
     else {
         _gotsong = false;
@@ -24,9 +24,10 @@ void CMPD::CheckSubmit(int curplaytime)
     }
 }
 
-CMPD::CMPD(CConfig *cfg)
+CMPD::CMPD(CConfig *cfg, CAudioScrobbler *as)
 {
     _cfg = cfg;
+    _as = as;
     _conn = NULL;
     _gotsong = false;
     _connected = false;
@@ -121,10 +122,10 @@ void CMPD::Update()
                 const char *text = mpd_message_get_text(msg);
                 if(_gotsong && text) {
                     if(!strncmp(text, "love", 4)) {
-                        AudioScrobbler->LoveTrack(_song);
+                        _as->LoveTrack(_song);
                     }
                     else if(!strncmp(text, "unlove", 6)) {
-                        AudioScrobbler->LoveTrack(_song, true);
+                        _as->LoveTrack(_song, true);
                     }
                 }
                 mpd_message_free(msg);

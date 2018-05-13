@@ -1,6 +1,8 @@
 #ifndef _MPD_H
 #define _MPD_H
 
+class CAudioScrobbler;
+
 class Song {
 public:
 	Song() {};
@@ -25,7 +27,7 @@ private:
 class CMPD
 {
 public:
-	CMPD(CConfig *cfg);
+	CMPD(CConfig *cfg, CAudioScrobbler *as);
 	~CMPD();
 
 	bool Connect();
@@ -39,6 +41,7 @@ private:
 	void GotNewSong(struct mpd_song *song);
 
 	CConfig *_cfg;
+	CAudioScrobbler *_as;
 	mpd_connection *_conn;
 	int _songid;
 	int _songpos;

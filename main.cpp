@@ -11,7 +11,6 @@ void onclose()
 {
 	iprintf("%s", "Closing mpdas.");
 
-	if(AudioScrobbler) delete AudioScrobbler;
 	if(Cache) delete Cache;
 }
 
@@ -127,13 +126,14 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	CMPD MPD(&cfg);
+	CAudioScrobbler AudioScrobbler(&cfg);
+	AudioScrobbler.Handshake();
+
+	CMPD MPD(&cfg, &AudioScrobbler);
 	if(!MPD.isConnected())
 		return EXIT_FAILURE;
 
-	AudioScrobbler = new CAudioScrobbler(&cfg);
-	AudioScrobbler->Handshake();
-	Cache = new CCache();
+	Cache = new CCache(&AudioScrobbler);
 	Cache->LoadCache();
 
 	// catch sigint

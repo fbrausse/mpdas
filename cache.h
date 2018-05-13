@@ -1,6 +1,8 @@
 #ifndef _CACHE_H
 #define _CACHE_H
 
+class CAudioScrobbler;
+
 class CacheEntry
 {
 public:
@@ -24,12 +26,13 @@ private:
 class CCache
 {
 public:
-	CCache() { _failtime = 0; }
+	CCache(CAudioScrobbler *as) { _failtime = 0; }
 	void AddToCache(const Song& song, time_t starttime);
 	void WorkCache();
 	void SaveCache();
 	void LoadCache();
 private:
+	CAudioScrobbler *_as;
 	time_t _failtime;
 	std::vector<CacheEntry*> _entries;
 };

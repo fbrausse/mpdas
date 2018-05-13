@@ -49,6 +49,4 @@ private:
 	CURL *curl_handle;
 };
 
-extern CAudioScrobbler* AudioScrobbler;
-
 #endif
