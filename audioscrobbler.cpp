@@ -91,7 +91,7 @@ std::string CAudioScrobbler::CreateScrobbleMessage(int index, const CacheEntry& 
 {
 	const Song& song = entry.getSong();
 
-	CLastFMMessage msg(_handle);
+	CLastFMMessage msg;
 	msg.AddField("method", "track.Scrobble");
 	msg.AddField("artist", song.getArtist());
 	msg.AddField("track", song.getTitle());
@@ -108,7 +108,7 @@ std::string CAudioScrobbler::CreateScrobbleMessage(int index, const CacheEntry& 
 		msg.AddField("albumArtist", song.getAlbumArtist());
 	}
 
-	return msg.GetMessage();
+	return msg.GetMessage(_handle);
 }
 
 void CAudioScrobbler::Failure()
@@ -193,14 +193,14 @@ bool CAudioScrobbler::LoveTrack(const Song& song, bool unlove)
 {
 	bool retval = false;
 
-	CLastFMMessage msg(_handle);
+	CLastFMMessage msg;
 	msg.AddField("method", unlove ? "track.unlove" : "track.love");
 	msg.AddField("artist", song.getArtist());
 	msg.AddField("track", song.getTitle());
 	msg.AddField("api_key", APIKEY);
 	msg.AddField("sk", _sessionid);
 
-	OpenURL(GetServiceURL(), msg.GetMessage().c_str());
+	OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
 
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
 		iprintf("%s", "(Un)loved track successfully.");
@@ -220,7 +220,7 @@ bool CAudioScrobbler::SendNowPlaying(const Song& song)
 {
 	bool retval = false;
 
-	CLastFMMessage msg(_handle);
+	CLastFMMessage msg;
 	msg.AddField("method", "track.updateNowPlaying");
 	msg.AddField("artist", song.getArtist());
 	msg.AddField("track", song.getTitle());
@@ -236,7 +236,7 @@ bool CAudioScrobbler::SendNowPlaying(const Song& song)
 		msg.AddField("albumArtist", song.getAlbumArtist());
 	}
 
-	OpenURL(GetServiceURL(), msg.GetMessage().c_str());
+	OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
 
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
 		iprintf("%s", "Updated \"Now Playing\" status successfully.");
@@ -260,7 +260,7 @@ std::string CAudioScrobbler::Handshake()
 	}
 	std::string password = _cfg->Get("password");
 
-	CLastFMMessage msg(_handle);
+	CLastFMMessage msg;
 
 	msg.AddField("method", "auth.getMobileSession");
 	msg.AddField("username", username);
@@ -276,7 +276,7 @@ std::string CAudioScrobbler::Handshake()
 	}
 	msg.AddField("api_key", APIKEY);
 
-	OpenURL(GetServiceURL(), msg.GetMessage().c_str());
+	OpenURL(GetServiceURL(), msg.GetMessage(_handle).c_str());
 
 	std::string sessionid;
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
@@ -297,10 +297,10 @@ std::string CAudioScrobbler::Handshake()
 	return sessionid;
 }
 
-std::string CLastFMMessage::GetMessage()
+std::string CLastFMMessage::GetMessage(CURL *curl_handle) const
 {
 	std::ostringstream strstream;
-	for(std::map<std::string, std::string>::iterator it = valueMap.begin(); it != valueMap.end(); ++it) {
+	for(std::map<std::string, std::string>::const_iterator it = valueMap.begin(); it != valueMap.end(); ++it) {
 		if(it != valueMap.begin()) {
 			strstream << "&";
 		}
@@ -316,10 +316,10 @@ std::string CLastFMMessage::GetMessage()
 	return strstream.str();
 }
 
-std::string CLastFMMessage::GetSignatureHash()
+std::string CLastFMMessage::GetSignatureHash() const
 {
 	std::ostringstream strstream;
-	for(std::map<std::string, std::string>::iterator it = valueMap.begin(); it != valueMap.end(); ++it) {
+	for(std::map<std::string, std::string>::const_iterator it = valueMap.begin(); it != valueMap.end(); ++it) {
 		strstream << it->first << it->second;
 	}
 

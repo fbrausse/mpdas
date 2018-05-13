@@ -35,18 +35,16 @@ private:
 class CLastFMMessage
 {
 public:
-	CLastFMMessage(CURL *curl_handle) { this->curl_handle = curl_handle; }
 	void AddField(std::string name, std::string value) { valueMap[name] = value; }
 	void AddField(std::string name, int value) {
 		std::ostringstream str;
 		str << value;
 		AddField(name, str.str());
 	}
-	std::string GetMessage();
+	std::string GetMessage(CURL *curl_handle) const;
 private:
 	std::map<std::string, std::string> valueMap;
-	std::string GetSignatureHash();
-	CURL *curl_handle;
+	std::string GetSignatureHash() const;
 };
 
 #endif
