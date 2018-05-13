@@ -9,11 +9,11 @@
 
 size_t writecb(void* ptr, size_t size, size_t nmemb, void *userdata)
 {
-	reinterpret_cast<CAudioScrobbler *>(userdata)->ReportResponse((char*)ptr, size*nmemb);
+	reinterpret_cast<CAudioScrobbler *>(userdata)->ReportResponse((const char*)ptr, size*nmemb);
 	return size*nmemb;
 }
 
-CAudioScrobbler::CAudioScrobbler(CConfig *cfg)
+CAudioScrobbler::CAudioScrobbler(const CConfig *cfg)
 {
 	_cfg = cfg;
 	_failcount = 0;
@@ -41,7 +41,7 @@ std::string CAudioScrobbler::GetServiceURL()
 	return "https://ws.audioscrobbler.com/2.0/";
 }
 
-void CAudioScrobbler::OpenURL(std::string url, const char* postfields = 0, char* errbuf = 0)
+void CAudioScrobbler::OpenURL(const std::string &url, const char* postfields = 0, char* errbuf = 0)
 {
 	curl_easy_setopt(_handle, CURLOPT_DNS_CACHE_TIMEOUT, 0);
 	curl_easy_setopt(_handle, CURLOPT_NOPROGRESS, 1);
@@ -82,7 +82,7 @@ void CAudioScrobbler::OpenURL(std::string url, const char* postfields = 0, char*
 }
 
 
-void CAudioScrobbler::ReportResponse(char* buf, size_t size)
+void CAudioScrobbler::ReportResponse(const char* buf, size_t size)
 {
 	_response.append(buf);
 }

@@ -5,12 +5,12 @@
 class CAudioScrobbler
 {
 public:
-	CAudioScrobbler(CConfig *cfg);
+	CAudioScrobbler(const CConfig *cfg);
 	~CAudioScrobbler();
 
 	std::string CreateScrobbleMessage(int index, const CacheEntry& entry);
 	bool Scrobble(const CacheEntry& entry);
-	void ReportResponse(char* buf, size_t size);
+	void ReportResponse(const char* buf, size_t size);
 	bool LoveTrack(const Song& song, bool unlove = false);
 	bool SendNowPlaying(const Song& song);
 	void Failure();
@@ -18,10 +18,10 @@ private:
 	/* returns the session ID */
 	std::string Handshake();
 	std::string GetServiceURL();
-	void OpenURL(std::string url, const char* postfields, char* errbuf);
+	void OpenURL(const std::string &url, const char* postfields, char* errbuf);
 	bool CheckFailure();
 
-	CConfig *_cfg;
+	const CConfig *_cfg;
 	CURL* _handle;
 
 	std::string _response;
