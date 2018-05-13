@@ -46,18 +46,18 @@ std::string CAudioScrobbler::GetServiceURL()
 
 void CAudioScrobbler::OpenURL(const std::string &url, const char* postfields = 0, char* errbuf = 0)
 {
-	curl_easy_setopt(_handle, CURLOPT_DNS_CACHE_TIMEOUT, 0);
-	curl_easy_setopt(_handle, CURLOPT_NOPROGRESS, 1);
+	curl_easy_setopt(_handle, CURLOPT_DNS_CACHE_TIMEOUT, 0L);
+	curl_easy_setopt(_handle, CURLOPT_NOPROGRESS, 1L);
 	curl_easy_setopt(_handle, CURLOPT_WRITEFUNCTION, writecb);
 	curl_easy_setopt(_handle, CURLOPT_WRITEDATA, reinterpret_cast<void *>(this));
-	curl_easy_setopt(_handle, CURLOPT_TIMEOUT, 10);
+	curl_easy_setopt(_handle, CURLOPT_TIMEOUT, 10L);
 
 	if(postfields) {
-		curl_easy_setopt(_handle, CURLOPT_POST, 1);
+		curl_easy_setopt(_handle, CURLOPT_POST, 1L);
 		curl_easy_setopt(_handle, CURLOPT_POSTFIELDS, postfields);
 	}
 	else
-		curl_easy_setopt(_handle, CURLOPT_POST, 0);
+		curl_easy_setopt(_handle, CURLOPT_POST, 0L);
 	if(errbuf)
 		curl_easy_setopt(_handle, CURLOPT_ERRORBUFFER, errbuf);
 
