@@ -24,6 +24,7 @@ CAudioScrobbler::CAudioScrobbler(CConfig *cfg)
 		eprintf("%s", "Could not initialize CURL.");
 		exit(EXIT_FAILURE);
 	}
+	_sessionid = Handshake();
 }
 
 CAudioScrobbler::~CAudioScrobbler()
@@ -251,7 +252,7 @@ bool CAudioScrobbler::SendNowPlaying(const Song& song)
 	return retval;
 }
 
-void CAudioScrobbler::Handshake()
+std::string CAudioScrobbler::Handshake()
 {
 	std::string username = "";
 	for(unsigned int i = 0; i < _cfg->Get("username").length(); i++) {
@@ -277,12 +278,13 @@ void CAudioScrobbler::Handshake()
 
 	OpenURL(GetServiceURL(), msg.GetMessage().c_str());
 
+	std::string sessionid;
 	if(_response.find("<lfm status=\"ok\">") != std::string::npos) {
 		size_t start, end;
 		start = _response.find("<key>") + 5;
 		end = _response.find("</key>");
-		_sessionid = _response.substr(start, end-start);
-		iprintf("%s%s", "Last.fm handshake successful. SessionID: ", _sessionid.c_str());
+		sessionid = _response.substr(start, end-start);
+		iprintf("%s%s", "Last.fm handshake successful. SessionID: ", sessionid.c_str());
 		_authed = true;
 	}
 	else if(_response.find("<lfm status=\"failed\">") != std::string::npos) {
@@ -291,6 +293,8 @@ void CAudioScrobbler::Handshake()
 	}
 
 	CLEANUP();
+
+	return sessionid;
 }
 
 std::string CLastFMMessage::GetMessage()

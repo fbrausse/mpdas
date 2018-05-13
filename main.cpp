@@ -125,7 +125,6 @@ int main(int argc, char* argv[])
 	}
 
 	CAudioScrobbler AudioScrobbler(&cfg);
-	AudioScrobbler.Handshake();
 
 	CCache Cache(&AudioScrobbler);
 	Cache.LoadCache();

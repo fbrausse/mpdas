@@ -8,7 +8,6 @@ public:
 	CAudioScrobbler(CConfig *cfg);
 	~CAudioScrobbler();
 
-	void Handshake();
 	std::string CreateScrobbleMessage(int index, const CacheEntry& entry);
 	bool Scrobble(const CacheEntry& entry);
 	void ReportResponse(char* buf, size_t size);
@@ -16,6 +15,8 @@ public:
 	bool SendNowPlaying(const Song& song);
 	void Failure();
 private:
+	/* returns the session ID */
+	std::string Handshake();
 	std::string GetServiceURL();
 	void OpenURL(std::string url, const char* postfields, char* errbuf);
 	bool CheckFailure(std::string response);
