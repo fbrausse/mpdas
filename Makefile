@@ -15,7 +15,7 @@ CXXFLAGS	+= -DCONFDIR="\"$(CONFIG)\"" -DVERSION="\"$(VERSION)\""
 
 all: $(OUT)
 
-.cpp.o:
+$(OBJ): %.o: %.cpp $(wildcard *.h)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OUT): $(OBJ)
