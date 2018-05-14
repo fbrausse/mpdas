@@ -13,7 +13,7 @@ public:
 	~LibCURLEasy();
 	operator CURL *() const { return _handle; }
 private:
-	CURL *_handle;
+	CURL *const _handle;
 };
 
 class CAudioScrobbler
