@@ -12,8 +12,8 @@ void CCache::SaveCache()
 	}
 
 	for(unsigned int i = 0; i < _entries.size(); i++) {
-		CacheEntry* entry = _entries[i];
-		ofs << *entry;
+		const CacheEntry &entry = _entries[i];
+		ofs << entry;
 
 		if(i+1 == _entries.size())
 			ofs.flush();
@@ -39,8 +39,8 @@ void CCache::LoadCache()
 		if(length == ifs.tellg())
 			break;
 
-		CacheEntry *entry = new CacheEntry();
-		ifs >> *entry;
+		CacheEntry entry;
+		ifs >> entry;
 		_entries.push_back(entry);
 	}
 
@@ -55,8 +55,7 @@ void CCache::WorkCache()
 	}
 	_failtime = 0;
 	while(_entries.size()) {
-		if(_as.Scrobble(*_entries.front())) {
-			delete _entries.front();
+		if(_as.Scrobble(_entries.front())) {
 			_entries.erase(_entries.begin());
 		}
 		else {
@@ -72,9 +71,7 @@ void CCache::WorkCache()
 
 void CCache::AddToCache(const Song& song, time_t starttime)
 {
-	CacheEntry *entry = new CacheEntry(song, starttime);
-
-	_entries.push_back(entry);
+	_entries.push_back(CacheEntry(song, starttime));
 	SaveCache();
 }
 

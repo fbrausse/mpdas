@@ -34,7 +34,7 @@ public:
 private:
 	CAudioScrobbler &_as;
 	time_t _failtime;
-	std::vector<CacheEntry*> _entries;
+	std::vector<CacheEntry> _entries;
 };
 
 #endif
