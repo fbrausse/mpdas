@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	iprintf("Using %s service URL", cfg.getService() == LastFm ? "Last.fm" : "Libre.fm");
+	iprintf("Using %s service URL", services[cfg.getService()].name);
 
 	if (go_daemon) {
 		if (daemon(1, 0)) {

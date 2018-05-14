@@ -6,6 +6,11 @@ enum ScrobblingService {
 	LibreFm
 };
 
+extern struct ScrobblingServiceDesc {
+	const char *name;
+	const char *url;
+} const services[];
+
 class CConfig
 {
 public:

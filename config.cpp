@@ -1,5 +1,10 @@
 #include "mpdas.h"
 
+const ScrobblingServiceDesc services[] = {
+	/*[LastFm]  =*/ { "Last.fm" , "https://ws.audioscrobbler.com/2.0/" },
+	/*[LibreFm] =*/ { "Libre.fm", "https://libre.fm/2.0/" },
+};
+
 int IniHandler(void* param, const char* section, const char* name, const char* value)
 {
     CConfig* config = (CConfig*)param;

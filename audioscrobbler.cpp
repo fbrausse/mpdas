@@ -35,10 +35,7 @@ CAudioScrobbler::CAudioScrobbler(const CConfig &cfg)
 
 const char * CAudioScrobbler::GetServiceURL()
 {
-	if(_cfg.getService() == LibreFm) {
-		return "https://libre.fm/2.0/";
-	}
-	return "https://ws.audioscrobbler.com/2.0/";
+	return services[_cfg.getService()].url;
 }
 
 std::string CAudioScrobbler::OpenURL(const char *url, const char* postfields = 0, char* errbuf = 0)
