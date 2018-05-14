@@ -33,7 +33,7 @@ public:
 
 	bool Connect();
 	void Update();
-	void SetSong(const Song *song);
+	void SetSong(const Song &song);
 	void CheckSubmit(int curplaytime);
 	Song GetSong() const { return _song; };
 
