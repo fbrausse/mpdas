@@ -61,31 +61,38 @@ int main(int argc, char* argv[])
 	char* config = 0;
 	bool go_daemon = false;
 
-	if(argc >= 2) {
-		for(i = 1; i <=  argc-1; i++) {
-			if(strstr(argv[i], "-h") == argv[i]) {
-				printversion();
-				printhelp();
-				return EXIT_SUCCESS;
-			}
-			if(strstr(argv[i], "-v") == argv[i]) {
-				printversion();
-				return EXIT_SUCCESS;
-			}
-
-			else if(strstr(argv[i], "-c") == argv[i]) {
-				if(i >= argc-1) {
-					fprintf(stderr, "mpdas: config path missing!\n");
-					printhelp();
-					return EXIT_FAILURE;
-				}
-				config = argv[i+1];
-			}
-
-			else if(strstr(argv[i], "-d") == argv[i]) {
-				go_daemon = true;
-			}
+	for (int opt; (opt = getopt(argc, argv, ":c:dhv")) != -1;)
+		switch (opt) {
+		case 'c':
+			config = optarg;
+			break;
+		case 'd':
+			go_daemon = true;
+			break;
+		case 'h':
+			printversion();
+			printhelp();
+			return EXIT_SUCCESS;
+		case 'v':
+			printversion();
+			return EXIT_SUCCESS;
+		case '?':
+			fprintf(stderr,"unknown option '-%c'\n",optopt);
+			printhelp();
+			return EXIT_FAILURE;
+		case ':':
+			fprintf(stderr,"option '-%c' expecting a parameter\n",
+			        optopt);
+			printhelp();
+			return EXIT_FAILURE;
 		}
+	if (optind < argc) {
+		fprintf(stderr,"unrecognized trailing options");
+		do {
+			fprintf(stderr," '%s'",argv[optind++]);
+		} while (optind < argc);
+		fprintf(stderr,"\n");
+		return EXIT_FAILURE;
 	}
 
 	atexit(onclose);
